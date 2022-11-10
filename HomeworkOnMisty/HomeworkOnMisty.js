@@ -167,13 +167,30 @@ function RightCorrection()
     misty.Set("inCorrecetion", false);
 }
 //--------------------- Random Head Movements-------------------------------------------------
+//Modified by Robot Squad to make sure Misty moves her head using
+//her full range of motion, hopefully making the object detection
+//more functional.
+//{40,35,45} max range. Negative values, instead, show min range.
+int[,] fullRange = new int[,] {{40,0}, {40,35}, {0,35}, {-40,35}, {-40,0}, {-40,-35},{0,-35},{40,-35}, {0,0}}
+int index = 0;
+function _look_around() { //
+  misty.MoveHeadDegrees(fullRange[index,0], fullRange[index,1], getRandomInt(-45, 45), 40);
+	index += 1;
+	if(index<10)
+  {
+    //index = 0; //maybe?? might cause infite recursion.
+		misty.RegisterTimerEvent("look_around", 10000, false);
+  }
+}
+misty.RegisterTimerEvent("look_around", 100, true); //changed from false to true
+/*//--------------------- Random Head Movements-------------------------------------------------
 
 function _look_around() {
     misty.MoveHeadDegrees(getRandomInt(-40, 20), getRandomInt(-35, 35), getRandomInt(-45, 45), 40);
     misty.RegisterTimerEvent("look_around", getRandomInt(5, 10) * 1000, false);
 }
 misty.RegisterTimerEvent("look_around", 100, true); //changed from false to true
-
+*/
 // -------------------------- Support Function------------------------------------------------
 
 function getRandomInt(min, max) {
