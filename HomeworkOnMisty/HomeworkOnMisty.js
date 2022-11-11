@@ -17,24 +17,34 @@
  //_GetAudioList();
 
  //call method to start detecting objectsgg
- start_object_detection();
+// start_object_detection();
 
  //--------------------- Random Head Movements-------------------------------------------------
  
 var fullRange = [[40,0], [40,35], [0,35], [-40,35], [-40,0], [-40,-35],[0,-35],[40,-35], [0,0]];
 var index = 0;
 function _look_around() { //
-    misty.MoveHeadDegrees(fullRange[index,0], fullRange[index,1], getRandomInt(-45, 45), 40);
+    misty.MoveHeadDegrees(-40, 0, 81); // misty moves head to top left corner
+    misty.Speak("TOP LEFT");
+
+    misty.Pause(3000);
+    misty.MoveHeadDegrees(-40, 0, 40);
+    misty.Speak("TOP MIDDLE"); 
+
 }
- misty.RegisterTimerEvent("look_around", 100, true); //changed from false to true
+ //misty.RegisterTimerEvent("look_around", 100, true); //changed from false to true
  
+ _look_around();
+
+
+
  // -------------------------- Support Function------------------------------------------------
  
- function getRandomInt(min, max) {
+ /*function getRandomInt(min, max) {
      return Math.floor(Math.random() * (max - min + 1)) + min;
- }
+ }*/
  
- // Object Detection
+ /*// Object Detection
  function start_object_detection() {
      // If you would like to get data only about say object - dog use the below line
      // If you prefer to get data about all 70 objects comment it out
@@ -53,9 +63,9 @@ function _look_around() { //
      misty.StartObjectDetector(0.51, 0, 25);
  
  
- }
+ }*/
  
- //define variables that will store string data from object detected
+ /*//define variables that will store string data from object detected
  var theA = "";
  var currObject = "";
  function _object_detection(data) {
@@ -163,7 +173,7 @@ function _look_around() { //
          //she should and will be able to detect the object, if it isn't the one being searched for
          /*
          misty.Debug("We have not found your object of choice just yet.. remove it to continue search");
- */
+ 
          currObject = theA;
          misty.Debug("We have not found the current object as of yet..The current object found is a  " + currObject); //display current object found
      }
@@ -171,7 +181,7 @@ function _look_around() { //
  }
  
  misty.RegisterEvent("object_detection", "ObjectDetection", 500, true); //misty will keep searching for obj..misty
- 
+ */
  
  // Misty can detect and provide information about 70 different objects:
  // person
