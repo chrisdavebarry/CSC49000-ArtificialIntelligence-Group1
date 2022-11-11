@@ -17,22 +17,48 @@
  //_GetAudioList();
 
  //call method to start detecting objectsgg
-// start_object_detection();
+start_object_detection();
 
  //--------------------- Random Head Movements-------------------------------------------------
  
-var fullRange = [[40,0], [40,35], [0,35], [-40,35], [-40,0], [-40,-35],[0,-35],[40,-35], [0,0]];
-var index = 0;
+var objectFound = false;
 function _look_around() { //
-    misty.MoveHeadDegrees(-40, 0, 81); // misty moves head to top left corner
-    misty.Speak("TOP LEFT");
+    while(!objectFound)
+    {
+        misty.MoveHeadDegrees(-40, 0, 81); // misty moves head to top left corner
+        misty.Speak("TOP LEFT");
 
-    misty.Pause(3000);
-    misty.MoveHeadDegrees(-40, 0, 40);
-    misty.Speak("TOP MIDDLE"); 
+        misty.Pause(3000);
+        misty.MoveHeadDegrees(-40, 0, 0);
+        misty.Speak("TOP MIDDLE"); 
 
+        misty.Pause(3000);
+        misty.MoveHeadDegrees(-40, 0, -81);
+        misty.Speak("TOP RIGHT"); 
+
+        misty.Pause(3000);
+        misty.MoveHeadDegrees(0, 0, -81);
+        misty.Speak("MIDDLE RIGHT"); 
+
+        misty.Pause(3000);
+        misty.MoveHeadDegrees(40, 0, -81);
+        misty.Speak("BOTTOM RIGHT"); 
+
+        misty.Pause(3000);
+        misty.MoveHeadDegrees(40, 0, 0);
+        misty.Speak("BOTTOM MIDDLE"); 
+
+        misty.Pause(3000);
+        misty.MoveHeadDegrees(40, 0, 81);
+        misty.Speak("BOTTOM LEFT");
+        
+        misty.Pause(3000);
+        misty.MoveHeadDegrees(0, 0, 81);
+        misty.Speak("MIDDLE LEFT"); 
+
+        misty.Pause(3000);
+    }
 }
- //misty.RegisterTimerEvent("look_around", 100, true); //changed from false to true
  
  _look_around();
 
@@ -40,11 +66,11 @@ function _look_around() { //
 
  // -------------------------- Support Function------------------------------------------------
  
- /*function getRandomInt(min, max) {
+ function getRandomInt(min, max) {
      return Math.floor(Math.random() * (max - min + 1)) + min;
- }*/
+ }
  
- /*// Object Detection
+ // Object Detection
  function start_object_detection() {
      // If you would like to get data only about say object - dog use the below line
      // If you prefer to get data about all 70 objects comment it out
@@ -63,9 +89,9 @@ function _look_around() { //
      misty.StartObjectDetector(0.51, 0, 25);
  
  
- }*/
+ }
  
- /*//define variables that will store string data from object detected
+ //define variables that will store string data from object detected
  var theA = "";
  var currObject = "";
  function _object_detection(data) {
@@ -78,6 +104,7 @@ function _look_around() { //
  
          //we can do this for each object we select on dashboard....whenever that functionality is added
          misty.Debug("We have located the CUP your job is DONE HERE STOP");
+         misty.Speak("Found chair");
  
          //misty reacts to finding the cup
          misty.ChangeLED(50, 150, 50);
@@ -92,96 +119,13 @@ function _look_around() { //
          misty.MoveHeadPosition(0, 0, 0, 100);
  
           //unregister events so that misty doesn't continue moving/looking around 
-         misty.UnregisterEvent("Hazard");
-         misty.UnregisterEvent("drive_random");
          misty.UnregisterEvent("object_detection");
          misty.UnregisterAllEvents();
-     }
-     else if (theA == "laptop" && data.PropertyTestResults[0].PropertyParent.Confidence >= 0.60) { //when we add funtionality for user to select object this will instead look like this 
-         misty.UnregisterEvent("look_around");//stop misty from looking around immediately
- 
-         misty.Debug("found the laptop");
-         
-         //misty reacts to finding the laptop
-         misty.ChangeLED(133, 125, 70);
-         misty.MoveHeadPosition(-5, 0, 0, 100);
-         misty.MoveArmDegrees("both", 90, 100);
-         misty.PlayAudio("Ifoundlaptop.mp3");
- 
-         //misty stops all operations
-         misty.Stop();
-       //  misty.Pause(3000);
-         misty.MoveHeadPosition(0, 0, 0, 100); //reset head and arm position to normal
-         misty.MoveArmDegrees("both", 0, 100);
-         misty.UnregisterEvent("Hazard");
-         misty.UnregisterEvent("drive_random");
-        // misty.UnregisterEvent("look_around");
-         misty.UnregisterEvent("object_detection");
-         misty.UnregisterAllEvents();
-     }
-     else if (theA == "suitcase" && data.PropertyTestResults[0].PropertyParent.Confidence >= 0.60) {
-         misty.Debug("we found MISTYS HOME yall..aka a suitcase");
-         misty.UnregisterEvent("look_around");//stop misty from looking around immediately
-         misty.UnregisterEvent("Hazard");
-         misty.UnregisterEvent("drive_random");
-   
-         //misty reacts to finding her suitcase
-         misty.ChangeLED(255, 0, 0);
-         misty.MoveHeadDegrees(-35, -40, -10, 90);
-         misty.MoveArmDegrees("both", -90, 100);
-         misty.PlayAudio("Ifoundsuitcase.mp3", 80);
-         misty.Debug("we ARE HERE IN THE SUITCAAASSEEE");
-         //misty halts all operations
-         misty.Stop();
-         misty.UnregisterEvent("object_detection");
-         misty.UnregisterAllEvents();
-         misty.Pause(4000);
-         misty.MoveHeadDegrees(0, 0, 0, 80);
-         misty.MoveArmDegrees("both", 90, 100);
-         misty.Debug("we are HERE SUITCAse");
-         misty.Pause(3000);
-         //unregister events so that misty doesn't continue moving/looking around 
- 
-     }
-     else if (theA == "chair" && data.PropertyTestResults[0].PropertyParent.Confidence >= 0.60 ) { 
-       misty.Debug("we found a chair once again man.......");
-     //  misty.Stop();
-       misty.UnregisterEvent("look_around");//stop misty from looking around immediately
-       misty.UnregisterEvent("Hazard");
-       misty.UnregisterEvent("drive_random");
-       //misty reacts to finding a chair
-       misty.ChangeLED(255, 0, 0);//red stop
-       misty.MoveHeadDegrees(-35, -40, -10, 90);
-       misty.MoveArmDegrees("both", -90, 100);
-       misty.PlayAudio("Ifoundchair.mp3", 70);
-  
-       misty.Debug("we are here now CHAIR");
- 
-       //misty haults operations
-       misty.Stop();
-       misty.UnregisterEvent("object_detection");
-       misty.UnregisterAllEvents();
-       misty.Pause(4000);
-       misty.MoveHeadDegrees(0, 0, 0, 80);
-       misty.MoveArmDegrees("both", 90, 100);
- 
-        //unregister events so that misty doesn't continue moving/looking around 
-   }
-     else if (theA != "cup" && theA != "laptop" && theA != "backpack" && theA != "chair") //DEBUG displayed '' instead of "" so maybe its a char instead of string
-     {
-         //please move the object out of mistys view..... this will have added complexity..misty
-         //she should and will be able to detect the object, if it isn't the one being searched for
-         /*
-         misty.Debug("We have not found your object of choice just yet.. remove it to continue search");
- 
-         currObject = theA;
-         misty.Debug("We have not found the current object as of yet..The current object found is a  " + currObject); //display current object found
      }
  
  }
  
  misty.RegisterEvent("object_detection", "ObjectDetection", 500, true); //misty will keep searching for obj..misty
- */
  
  // Misty can detect and provide information about 70 different objects:
  // person
