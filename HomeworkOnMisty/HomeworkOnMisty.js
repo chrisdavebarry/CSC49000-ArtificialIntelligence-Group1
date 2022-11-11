@@ -1,66 +1,76 @@
-//Goal: The robot gets a string and uses an API to speak the text in the desired language.
 
-//Misty starts to walk while it detects objects. It plays and audio when the object is found.
-
-// THIS CODE CURRENTLY CAN DETECT an object and move but will stop unusually before reaching objects when other objects are near
-
-  //In ORDER TO STOP THE OTHER ROBOT WE NEED AN EVENT HERE THAT QUERIES THE DASHBOARD FOR A BOOLEAN
-         //ex: ObjectFound = false
-         //if the object is found POST the update to OBjectFound = true 
-         //ex: sendexternalrequest(GET,.....dashboard);
-         //will probably check that data every two seconds...misty
-         //
-         //if time permits, instead of stopping the robot, we can have it follow the sound of the other robot 
-         //to reach its coordinates
-        
- //more
- //_GetAudioList();
 
  //call method to start detecting objectsgg
 start_object_detection();
 
- //--------------------- Random Head Movements-------------------------------------------------
+ //--------------------- Head Movements ------------------------\\
  
 var objectFound = false;
+var timeout = 50; // number of surveils until timeout
+var i=0;
 function _look_around() { //
-    while(!objectFound)
+    while(objectFound == false && i <= 5)
     {
+        var pauseTime = 500; // amount of time to pause between switches in milliseconds
         misty.MoveHeadDegrees(-40, 0, 81); // misty moves head to top left corner
-        misty.Speak("TOP LEFT");
+        //misty.Speak("TOP LEFT");
 
-        misty.Pause(3000);
+        misty.Pause(pauseTime);
         misty.MoveHeadDegrees(-40, 0, 0);
-        misty.Speak("TOP MIDDLE"); 
+        //misty.Speak("TOP MIDDLE"); 
 
-        misty.Pause(3000);
+        misty.Pause(pauseTime);
         misty.MoveHeadDegrees(-40, 0, -81);
-        misty.Speak("TOP RIGHT"); 
+        //misty.Speak("TOP RIGHT"); 
 
-        misty.Pause(3000);
+        misty.Pause(pauseTime);
         misty.MoveHeadDegrees(0, 0, -81);
-        misty.Speak("MIDDLE RIGHT"); 
+        //misty.Speak("MIDDLE RIGHT"); 
 
-        misty.Pause(3000);
+        misty.Pause(pauseTime);
         misty.MoveHeadDegrees(40, 0, -81);
-        misty.Speak("BOTTOM RIGHT"); 
+        //misty.Speak("BOTTOM RIGHT"); 
 
-        misty.Pause(3000);
+        misty.Pause(pauseTime);
         misty.MoveHeadDegrees(40, 0, 0);
-        misty.Speak("BOTTOM MIDDLE"); 
+        //misty.Speak("BOTTOM MIDDLE"); 
 
-        misty.Pause(3000);
+        misty.Pause(pauseTime);
         misty.MoveHeadDegrees(40, 0, 81);
-        misty.Speak("BOTTOM LEFT");
-        
-        misty.Pause(3000);
-        misty.MoveHeadDegrees(0, 0, 81);
-        misty.Speak("MIDDLE LEFT"); 
+        //misty.Speak("BOTTOM LEFT");
 
-        misty.Pause(3000);
+        misty.Pause(pauseTime);
+        misty.MoveHeadDegrees(0, 0, 81);
+        //misty.Speak("MIDDLE LEFT"); 
+
+        misty.Pause(pauseTime);
+        i++;
+        misty.Debug("The incrementer is at: " + i);
     }
 }
+// dance after completing revolutions
+function _dance() {
+    //call function that will drive in an arc
+    //parameters:heading =-20, radius=0.0001, time = 500milliseconds
+    misty.DriveArc(-20, 0.0001, 500, false);
+    //pause for 1000 milliseconds
+    misty.Pause(1000);
+    //call function that will drive in an arc
+    //parameters:heading =20, radius=0.0001, time = 500milliseconds
+    misty.DriveArc(20, 0.0001, 500, false);
+    //pause for 1000 milliseconds
+    misty.Pause(1000);
+    //register a timer for the event
+    //set the timer to 3000 milliseconds
+    if (repeat) misty.RegisterTimerEvent(
+        "turning",
+        3000,
+        false);
+}
  
- _look_around();
+// have misty start to surveil 
+_look_around();
+_dance();
 
 
 
@@ -74,7 +84,7 @@ function _look_around() { //
  function start_object_detection() {
      // If you would like to get data only about say object - dog use the below line
      // If you prefer to get data about all 70 objects comment it out
-     // misty.AddPropertyTest("object_detection", "Description", "==", "cup", "string");
+     misty.AddPropertyTest("object_detection", "Description", "==", "chair", "string");
  
      // Argument 1: Data from human pose estimation is streamed into the callback function
      // Argument 2: Event Name (do not change this) 
@@ -98,19 +108,18 @@ function _look_around() { //
      var object_info = data.PropertyTestResults[0].PropertyParent;
      misty.Debug("OBJ detection code is now executing...");
      theA = object_info.Description.toString();
-     if (theA == "cup" && data.PropertyTestResults[0].PropertyParent.Confidence >= 0.6) //minimum confidence should be at least 60%
+     if (theA == "chair" && data.PropertyTestResults[0].PropertyParent.Confidence >= 0.6) //minimum confidence should be at least 60%
      {
          misty.UnregisterEvent("look_around");//stop misty from looking around immediately
  
          //we can do this for each object we select on dashboard....whenever that functionality is added
-         misty.Debug("We have located the CUP your job is DONE HERE STOP");
-         misty.Speak("Found chair");
+         misty.Debug("We have located the CHAIR your job is DONE HERE STOP");
  
          //misty reacts to finding the cup
          misty.ChangeLED(50, 150, 50);
          misty.MoveArmDegrees("both", 90, 100); 
          misty.MoveHeadPosition(-5, 0, 0, 100);
-         misty.PlayAudio("Ifoundcup.mp3");
+         misty.Speak("The job is done, I found a CHAIR");
         
          //misty stops all operations
          misty.Stop();
